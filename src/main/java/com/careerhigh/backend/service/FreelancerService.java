@@ -24,6 +24,14 @@ public class FreelancerService {
                 .collect(Collectors.toList());
     }
 
+    // 프리랜서 상세 조회
+    public FreelancerDto getFreelancer(Long freelancerId) {
+        return FreelancerDto.fromEntity(
+                freelancerRepository.findById(freelancerId)
+                        .orElseThrow(() -> new IllegalArgumentException("Not Found Freelancer"))
+        );
+    }
+
     // 프리랜서 리스트 조회(인기 프리랜서)
 
     // 프리랜서 리스트 조회(추천 프리랜서)

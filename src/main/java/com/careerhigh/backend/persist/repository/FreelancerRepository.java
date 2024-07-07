@@ -14,4 +14,6 @@ public interface FreelancerRepository extends JpaRepository<Freelancer, Long> {
 
     @Query("SELECT f FROM Freelancer f WHERE f.job LIKE %:job%")
     List<Freelancer> findByJob(@Param("job") String job);
+
+    
 }

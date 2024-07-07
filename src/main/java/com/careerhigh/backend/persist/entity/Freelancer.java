@@ -31,7 +31,7 @@ public class Freelancer {
     private String phoneNumber;
 
     @Column(name = "has_career")
-    private Boolean hasCareer; // 경험 유무
+    private Boolean hasCareer; // 경력 유무
 
     @Column(name = "career_year")
     private Integer careerYear; // 경력기간
@@ -50,4 +50,8 @@ public class Freelancer {
 
     @Column(name = "profile_img")
     private String profileImg; // 프로필 이미지
+
+    @OneToOne
+    @JoinColumn(name = "skill_id")
+    private Skill skill;
 }

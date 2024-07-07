@@ -1,6 +1,7 @@
 package com.careerhigh.backend.dto;
 
 import com.careerhigh.backend.persist.entity.Freelancer;
+import com.careerhigh.backend.persist.entity.Skill;
 import lombok.*;
 
 @Getter
@@ -22,6 +23,7 @@ public class FreelancerDto {
     private String job; // 직무
     private Double starRating; // 평점
     private String profileImg; // 프로필 이미지
+    private SkillDto skillDto; // 스킬
 
     public static FreelancerDto fromEntity(Freelancer freelancer) {
         return FreelancerDto.builder()
@@ -37,6 +39,7 @@ public class FreelancerDto {
                 .job(freelancer.getJob())
                 .starRating(freelancer.getStarRating())
                 .profileImg(freelancer.getProfileImg())
+                .skillDto(SkillDto.fromEntity(freelancer.getSkill()))
                 .build();
     }
 }

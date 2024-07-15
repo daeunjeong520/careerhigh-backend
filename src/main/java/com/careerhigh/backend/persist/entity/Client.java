@@ -6,6 +6,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Getter
 @NoArgsConstructor
@@ -42,5 +45,8 @@ public class Client {
 
     @Column(name = "star_rating")
     private Double starRating; // 평점
+
+    @OneToMany(mappedBy = "client")
+    public List<Project> projectList = new ArrayList<>();
 
 }

@@ -10,7 +10,7 @@ spring:
 
   jpa:
     database:
-    open-in-view: false
+    open-in-view: true
     hibernate:
       ddl-auto: create
     defer-datasource-initialization: true

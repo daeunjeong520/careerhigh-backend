@@ -1,7 +1,9 @@
 package com.careerhigh.backend.controller;
 
 import com.careerhigh.backend.service.ClientService;
+import com.careerhigh.backend.vo.request.ClientLoginRequest;
 import com.careerhigh.backend.vo.request.ClientSignupRequest;
+import com.careerhigh.backend.vo.response.ClientLoginResponse;
 import com.careerhigh.backend.vo.response.ClientSignupResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,6 +30,17 @@ public class ClientController {
                         request.getCompanyName(),
                         request.getManagerName(),
                         request.getManagerPhone()
+                )
+        );
+    }
+
+    // 로그인
+    @PostMapping("/api/clients/login")
+    public ClientLoginResponse login(@RequestBody ClientLoginRequest request) {
+        return ClientLoginResponse.fromDto(
+                clientService.login(
+                        request.getEmail(),
+                        request.getPassword()
                 )
         );
     }

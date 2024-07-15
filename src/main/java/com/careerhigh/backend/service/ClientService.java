@@ -30,4 +30,16 @@ public class ClientService {
 
         return ClientDto.fromEntity(clientRepository.save(client));
     }
+    // 로그인
+    @Transactional
+    public ClientDto login(String email, String password) {
+        Client client = clientRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("Not found Email"));
+
+        if(!client.getEncryptedPwd().equals(password)) {
+            throw new RuntimeException("Do not match password");
+        }
+
+        return ClientDto.fromEntity(client);
+    }
 }

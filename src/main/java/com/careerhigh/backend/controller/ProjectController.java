@@ -1,8 +1,11 @@
 package com.careerhigh.backend.controller;
 
+import com.careerhigh.backend.persist.entity.Project;
 import com.careerhigh.backend.service.ProjectService;
+import com.careerhigh.backend.vo.request.ProjectApplyRequest;
 import com.careerhigh.backend.vo.request.ProjectCreateRequest;
 import com.careerhigh.backend.vo.request.ProjectCommissionRequest;
+import com.careerhigh.backend.vo.request.ProjectDiscussionRequest;
 import com.careerhigh.backend.vo.response.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -53,7 +56,7 @@ public class ProjectController {
     }
 
     // 프로젝트 의뢰(클라이언트 -> 프리랜서)
-    @PostMapping("/api/projects/request")
+    @PostMapping("/api/projects/commission")
     public ProjectCommissionResponse requestProject(@RequestBody ProjectCommissionRequest request) {
         return ProjectCommissionResponse.fromDto(
                 projectService.commissionProject(
@@ -67,6 +70,46 @@ public class ProjectController {
     @GetMapping("/api/projects/{projectId}/commission")
     public List<FreelancerInfo> commissionFreelancerList(@PathVariable("projectId") Long projectId) {
         return projectService.getCommissionFreelancerList(projectId)
+                .stream()
+                .map(FreelancerInfo::fromDto)
+                .collect(Collectors.toList());
+    }
+
+    // 프로젝트 지원(프리랜서 -> 클라이언트의 프로젝트)
+    @PostMapping("/api/projects/apply")
+    public ProjectApplyResponse applyProject(@RequestBody ProjectApplyRequest request) {
+        return ProjectApplyResponse.fromDto(
+                projectService.applyProject(
+                        request.getFreelancerId(),
+                        request.getProjectId()
+                )
+        );
+    }
+
+    // 클라이언트 -> 지원한 프리랜서 목록 조회
+    @GetMapping("/api/projects/{projectId}/apply")
+    public List<FreelancerInfo> applyFreelancerList(@PathVariable("projectId") Long projectId) {
+        return projectService.getApplyFreelancerList(projectId)
+                .stream()
+                .map(FreelancerInfo::fromDto)
+                .collect(Collectors.toList());
+    }
+
+    //협의 희망 -> 프로젝트 상태: CREATE, 프리랜서-프로젝트 조회: 상태 => DISCUSSION 변경
+    @PostMapping("/api/projects/discussion")
+    public ProjectDiscussionResponse discussionProject(@RequestBody ProjectDiscussionRequest request) {
+        return ProjectDiscussionResponse.fromDto(
+                projectService.discussionProject(
+                    request.getProjectId(),
+                    request.getFreelancerId()
+                )
+        );
+    }
+
+    // TODO: 협의중인 프리랜서 리스트
+    @GetMapping("/api/projects/{projectId}/discussion")
+    public List<FreelancerInfo> getDiscussionFreelancerList(@PathVariable("projectId") Long projectId) {
+        return projectService.getDiscussionFreelancerList(projectId)
                 .stream()
                 .map(FreelancerInfo::fromDto)
                 .collect(Collectors.toList());

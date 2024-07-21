@@ -19,6 +19,7 @@ public class FreelancerProjectDto {
 
     public static FreelancerProjectDto fromEntity(FreelancerProject freelancerProject) {
         return FreelancerProjectDto.builder()
+                .freelancerProjectId(freelancerProject.getFreelancerProjectId())
                 .freelancer(freelancerProject.getFreelancer())
                 .project(freelancerProject.getProject())
                 .status(freelancerProject.getStatus())

@@ -89,7 +89,7 @@ public class ProjectService {
         return ProjectDto.fromEntity(projectRepository.save(project));
     }
 
-    // TODO: 프로젝트 의뢰(클라이언트 -> 프리랜서 프로젝트 의뢰): COMMISSION
+    // 프로젝트 의뢰(클라이언트 -> 프리랜서 프로젝트 의뢰): COMMISSION
     @Transactional
     public FreelancerProjectDto commissionProject(Long projectId, Long freelancerId) {
         // 프로젝트 조회
@@ -113,7 +113,7 @@ public class ProjectService {
         return FreelancerProjectDto.fromEntity(result);
     }
 
-    // TODO: 의뢰한 프리랜서 리스트 조회(프로젝트의 의뢰한 프리랜서를 조회해야 함)
+    // 의뢰한 프리랜서 리스트 조회(프로젝트의 의뢰한 프리랜서를 조회해야 함)
     public List<FreelancerDto> getCommissionFreelancerList(Long projectId) {
         // 프로젝트 조회
         Project project = projectRepository.findById(projectId)
@@ -131,6 +131,85 @@ public class ProjectService {
         return result;
     }
 
+    // 프로젝트 지원(프리랜서 -> 프로젝트) : APPLY
+    @Transactional
+    public FreelancerProjectDto applyProject(Long freelancerId, Long projectId) {
+        // 프로젝트 조회
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new RuntimeException("Not Found Project"));
+
+        // 프리랜서 조회
+        Freelancer freelancer = freelancerRepository.findById(freelancerId)
+                .orElseThrow(() -> new RuntimeException("Not Found Freelancer"));
+
+        // 프리랜서-프로젝트 저장
+        FreelancerProject freelancerProject = FreelancerProject.builder()
+                .project(project)
+                .freelancer(freelancer)
+                .status("APPLY")
+                .build();
+
+        FreelancerProject result = freelancerProjectRepository.save(freelancerProject);
+        project.getFreelancerProjects().add(result);
+
+        return FreelancerProjectDto.fromEntity(result);
+    }
+
+    // 지원한 프리랜서 리스트 조회: APPLY
+    public List<FreelancerDto> getApplyFreelancerList(Long projectId) {
+        // 프로젝트 조회
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new RuntimeException("Not Found Project"));
+
+        // 프로젝트에서 프리랜서 리스트 조회
+        List<FreelancerDto> result = new ArrayList<>();
+        List<FreelancerProject> freelancerProjects = project.getFreelancerProjects();
+
+        for(FreelancerProject item: freelancerProjects) {
+            if(item.getStatus().equals("APPLY")) {
+                result.add(FreelancerDto.fromEntity(item.getFreelancer()));
+            }
+        }
+        return result;
+    }
+
+    // 클라이언트 -> 지원한 프리랜서에 대해 협의 희망
+    @Transactional
+    public FreelancerProjectDto discussionProject(Long projectId, Long freelancerId) {
+        // 프리랜서 조회
+        Freelancer freelancer = freelancerRepository.findById(freelancerId)
+                .orElseThrow(() -> new RuntimeException("Not Found Freelancer"));
+
+        // 프로젝트 조회
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new RuntimeException("Not Found Project"));
+
+        // 프리랜서-프로젝트 조회
+        FreelancerProject freelancerProject = freelancerProjectRepository.findByFreelancerAndProject(freelancer, project)
+                .orElseThrow(() -> new RuntimeException("Not Found FreelancerProject"));
+
+        freelancerProject.setStatus("DISCUSSION"); // CREATE-DISCUSSION
+
+        return FreelancerProjectDto.fromEntity(freelancerProject);
+    }
+
+    // TODO: 협의중인 프리랜서 리스트 조회: DISCUSSION
+    public List<FreelancerDto> getDiscussionFreelancerList(Long projectId) {
+        // 프로젝트 조회
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new RuntimeException("Not Found Project"));
+
+        // 프로젝트에서 프리랜서 리스트 조회(DISCUSSION)
+        List<FreelancerDto> result = new ArrayList<>();
+        List<FreelancerProject> freelancerProjects = project.getFreelancerProjects();
+
+        for(FreelancerProject item: freelancerProjects) {
+            if(item.getStatus().equals("DISCUSSION")) {
+                result.add(FreelancerDto.fromEntity(item.getFreelancer()));
+            }
+        }
+        return result;
+    }
 
     // 프로젝트 삭제
     @Transactional

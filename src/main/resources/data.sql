@@ -7,4 +7,3 @@ insert into freelancer(name, email, encrypted_pwd, phone_number, job_group, job,
 insert into freelancer(name, email, encrypted_pwd, phone_number, job_group, job, work_style, career_year, has_career, star_rating, profile_img, skill_id) values ('김경태', 'freelancerB@gmail.com', 'bbbb', '010-0814-0814', 'Developer', 'Android Developer', '상주', 5, true, 4.5, 'userb', 2);
 insert into freelancer(name, email, encrypted_pwd, phone_number, job_group, job, work_style, career_year, has_career, star_rating, profile_img, skill_id) values ('올리비아', 'freelancerA@gmail.com', 'cccc', '010-1234-5678', 'Designer', 'UI/UX Designer', '원격/상주', 6, true, 4.9, 'userc', 3);
 insert into freelancer(name, email, encrypted_pwd, phone_number, job_group, job, work_style, career_year, has_career, star_rating, profile_img, skill_id) values ('정다은', 'freelancerB@gmail.com', 'dddd', '010-0814-0814', 'Developer', 'Server Developer', '상주', 1, true, 4.2, 'userd', 4);
-

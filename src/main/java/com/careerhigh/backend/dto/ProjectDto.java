@@ -1,9 +1,12 @@
 package com.careerhigh.backend.dto;
 
 import com.careerhigh.backend.persist.entity.Client;
-import com.careerhigh.backend.persist.entity.Freelancer;
+import com.careerhigh.backend.persist.entity.FreelancerProject;
 import com.careerhigh.backend.persist.entity.Project;
 import lombok.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -26,28 +29,9 @@ public class ProjectDto {
     private String workStyle;        // 근무방식
     private Client client;           // 클라이언트
     private String clientStatus;     // 프로젝트 상태(클라이언트)
-    private Freelancer freelancer;   // 프리랜서
-    private String freelancerStatus; // 프로젝트 상태(프리랜서)
+    private List<FreelancerProject> freelancerProjects;
 
     public static ProjectDto fromEntity(Project project) {
-        if (project.getFreelancer() == null) {
-            return ProjectDto.builder()
-                    .projectId(project.getProjectId())
-                    .title(project.getTitle())
-                    .description(project.getDescription())
-                    .startDate(project.getStartDate())
-                    .period(project.getPeriod())
-                    .jobGroup(project.getJobGroup())
-                    .job(project.getJob())
-                    .wantCareerYear(project.getWantCareerYear())
-                    .progress(project.getProgress())
-                    .workStyle(project.getWorkStyle())
-                    .pay(project.getPay())
-                    .skill(project.getSkill())
-                    .clientStatus(project.getClientStatus())
-                    .client(project.getClient())
-                    .build();
-        }
         return ProjectDto.builder()
                 .projectId(project.getProjectId())
                 .title(project.getTitle())
@@ -56,15 +40,14 @@ public class ProjectDto {
                 .period(project.getPeriod())
                 .jobGroup(project.getJobGroup())
                 .job(project.getJob())
+                .pay(project.getPay())
+                .skill(project.getSkill())
                 .wantCareerYear(project.getWantCareerYear())
                 .progress(project.getProgress())
                 .workStyle(project.getWorkStyle())
-                .pay(project.getPay())
-                .skill(project.getSkill())
                 .client(project.getClient())
-                .freelancer(project.getFreelancer())
                 .clientStatus(project.getClientStatus())
-                .freelancerStatus(project.getFreelancerStatus())
+                .freelancerProjects(project.getFreelancerProjects())
                 .build();
     }
 }

@@ -1,9 +1,8 @@
 package com.careerhigh.backend.controller;
 
-import com.careerhigh.backend.dto.ProjectDto;
 import com.careerhigh.backend.service.ProjectService;
 import com.careerhigh.backend.vo.request.ProjectCreateRequest;
-import com.careerhigh.backend.vo.request.ProjectRequestRequest;
+import com.careerhigh.backend.vo.request.ProjectCommissionRequest;
 import com.careerhigh.backend.vo.response.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,9 +21,6 @@ public class ProjectController {
     // 프로젝트 등록
     @PostMapping("/api/projects")
     public ProjectCreateResponse createProject(@RequestBody ProjectCreateRequest request) {
-
-        log.info("clientId={}, title={}", request.getClientId(), request.getTitle());
-
         return ProjectCreateResponse.fromDto(
                 projectService.registerProject(
                         request.getClientId(),
@@ -58,22 +54,19 @@ public class ProjectController {
 
     // 프로젝트 의뢰(클라이언트 -> 프리랜서)
     @PostMapping("/api/projects/request")
-    public ProjectRequestResponse requestProject(@RequestBody ProjectRequestRequest request) {
-        return ProjectRequestResponse.fromDto(
-                projectService.requestProject(
+    public ProjectCommissionResponse requestProject(@RequestBody ProjectCommissionRequest request) {
+        return ProjectCommissionResponse.fromDto(
+                projectService.commissionProject(
                         request.getProjectId(),
                         request.getFreelancerId()
                 )
         );
     }
 
-    @GetMapping("/api/clients/{clientId}/projects/request")
-    public List<FreelancerInfo> requestFreelancerList(
-            @PathVariable("clientId") Long clientId,
-            @RequestParam("clientStatus") String clientStatus,
-            @RequestParam("freelancerStatus") String freelancerStatus
-    ) {
-        return projectService.getRequestFreelancerList(clientId, clientStatus, freelancerStatus)
+    // 클라이언트 -> 의뢰한 프리랜서 목록 조회
+    @GetMapping("/api/projects/{projectId}/commission")
+    public List<FreelancerInfo> commissionFreelancerList(@PathVariable("projectId") Long projectId) {
+        return projectService.getCommissionFreelancerList(projectId)
                 .stream()
                 .map(FreelancerInfo::fromDto)
                 .collect(Collectors.toList());

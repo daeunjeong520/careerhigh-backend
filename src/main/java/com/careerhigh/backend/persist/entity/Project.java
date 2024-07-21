@@ -3,7 +3,8 @@ package com.careerhigh.backend.persist.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -53,17 +54,10 @@ public class Project {
     @Column(name = "client_status")
     private String clientStatus;       // 프로젝트 상태(클라이언트)(CREATE(등록), REQUEST(의뢰), DISCUSSION(협의중) ,ONGOING(진행중), COMPLETE(완료))
 
-    @Setter
-    @Column(name = "freelancer_status")
-    private String freelancerStatus;  // 프로젝트 상태(프리랜서)(APPLY(지원), DISCUSSION, ONGOING, COMPLETE)
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "client_id")
     private Client client;
 
-    @Setter
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "freelancer_id")
-    private Freelancer freelancer;
-
+    @OneToMany(mappedBy = "project")
+    private final List<FreelancerProject> freelancerProjects = new ArrayList<>();
 }

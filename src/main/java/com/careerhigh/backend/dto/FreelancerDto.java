@@ -1,7 +1,6 @@
 package com.careerhigh.backend.dto;
 
 import com.careerhigh.backend.persist.entity.Freelancer;
-import com.careerhigh.backend.persist.entity.Skill;
 import lombok.*;
 
 @Getter

@@ -1,7 +1,6 @@
 package com.careerhigh.backend.dto;
 
 import com.careerhigh.backend.persist.entity.Client;
-import jakarta.persistence.Column;
 import lombok.*;
 
 @Getter

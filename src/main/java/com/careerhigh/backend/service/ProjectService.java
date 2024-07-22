@@ -211,6 +211,28 @@ public class ProjectService {
         return result;
     }
 
+    // 클라이언트 -> 프로젝트 의뢰 취소 // 프리랜서 -> 클라이언트 지원 거절
+    @Transactional
+    public String cancelCommissionProject(Long freelancerId, Long projectId) {
+        // 프리랜서 조회
+        Freelancer freelancer = freelancerRepository.findById(freelancerId)
+                .orElseThrow(() -> new RuntimeException("Not Found Freelancer"));
+
+        // 프로젝트 조회
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new RuntimeException("Not Found Project"));
+
+        // 프리랜서-프로젝트 조회
+        FreelancerProject freelancerProject = freelancerProjectRepository.findByFreelancerAndProject(freelancer, project)
+                .orElseThrow(() -> new RuntimeException("Not Found FreelancerProject"));
+
+        project.getFreelancerProjects().remove(freelancerProject);
+        freelancerProjectRepository.delete(freelancerProject);
+
+        return "OK";
+    }
+
+
     // 프로젝트 삭제
     @Transactional
     public Long deleteProject(Long projectId) {

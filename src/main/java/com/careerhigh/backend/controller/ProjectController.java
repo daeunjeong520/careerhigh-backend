@@ -2,10 +2,7 @@ package com.careerhigh.backend.controller;
 
 import com.careerhigh.backend.persist.entity.Project;
 import com.careerhigh.backend.service.ProjectService;
-import com.careerhigh.backend.vo.request.ProjectApplyRequest;
-import com.careerhigh.backend.vo.request.ProjectCreateRequest;
-import com.careerhigh.backend.vo.request.ProjectCommissionRequest;
-import com.careerhigh.backend.vo.request.ProjectDiscussionRequest;
+import com.careerhigh.backend.vo.request.*;
 import com.careerhigh.backend.vo.response.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -106,12 +103,24 @@ public class ProjectController {
         );
     }
 
-    // TODO: 협의중인 프리랜서 리스트
+    //협의중인 프리랜서 리스트
     @GetMapping("/api/projects/{projectId}/discussion")
     public List<FreelancerInfo> getDiscussionFreelancerList(@PathVariable("projectId") Long projectId) {
         return projectService.getDiscussionFreelancerList(projectId)
                 .stream()
                 .map(FreelancerInfo::fromDto)
                 .collect(Collectors.toList());
+    }
+
+    // TODO: 의뢰 취소
+    @PostMapping("/api/projects/commission/cancel")
+    public ProjectCommissionCancelResponse cancelCommissionProject(@RequestBody ProjectCommissionCancelRequest request) {
+        String result = projectService.cancelCommissionProject(
+                request.getFreelancerId(),
+                request.getProjectId()
+        );
+        return ProjectCommissionCancelResponse.builder()
+                .result(result)
+                .build();
     }
 }

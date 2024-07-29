@@ -11,6 +11,8 @@ import com.careerhigh.backend.persist.repository.ClientRepository;
 import com.careerhigh.backend.persist.repository.FreelancerProjectRepository;
 import com.careerhigh.backend.persist.repository.FreelancerRepository;
 import com.careerhigh.backend.persist.repository.ProjectRepository;
+import com.careerhigh.backend.vo.response.ProjectDiscussionDetail;
+import com.careerhigh.backend.vo.response.ProjectDiscussionStatusResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -31,7 +33,7 @@ public class ProjectService {
     private final ProjectRepository projectRepository;
     private final FreelancerProjectRepository freelancerProjectRepository;
 
-    // 프로젝트 리스트 조회(status=CREATE, DISCUSSION, ONGOING, COMPLETE)
+    // 프로젝트 리스트 조회(status=CREATE, DISCUSSION_COMPLETE, ONGOING, COMPLETE)
     public List<ProjectDto> getProjectList(Long clientId, String clientStatus) {
         // 클라이언트 조회
         Client client = clientRepository.findById(clientId)
@@ -193,7 +195,7 @@ public class ProjectService {
         return FreelancerProjectDto.fromEntity(freelancerProject);
     }
 
-    // TODO: 협의중인 프리랜서 리스트 조회: DISCUSSION
+    // 협의중인 프리랜서 리스트 조회: DISCUSSION
     public List<FreelancerDto> getDiscussionFreelancerList(Long projectId) {
         // 프로젝트 조회
         Project project = projectRepository.findById(projectId)
@@ -232,6 +234,126 @@ public class ProjectService {
         return "OK";
     }
 
+    public ProjectDiscussionDetail getProjectDiscussionDetail(Long freelancerId, Long projectId) {
+        // 프리랜서 조회
+        Freelancer freelancer = freelancerRepository.findById(freelancerId)
+                .orElseThrow(() -> new RuntimeException("Not Found Freelancer"));
+
+        // 프로젝트 조회
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new RuntimeException("Not Found Project"));
+
+        // 프리랜서-클라이언트 조회
+        FreelancerProject freelancerProject = freelancerProjectRepository.findByFreelancerAndProject(freelancer, project)
+                .orElseThrow(() -> new RuntimeException("Not Found FreelancerProject"));
+
+        // 클라이언트 조회
+        Client client = project.getClient();
+
+        return ProjectDiscussionDetail.builder()
+                .clientId(client.getClientId())
+                .freelancerId(freelancerId)
+                .projectId(projectId)
+                .companyName(client.getCompanyName())
+                .freelancerName(freelancer.getName())
+                .projectName(project.getTitle())
+                .freelancerImgPath(freelancer.getProfileImg())
+                .jobGroup(freelancer.getJobGroup())
+                .job(freelancer.getJob())
+                .skill(freelancer.getSkill().getName())
+                .careerYear(freelancer.getCareerYear())
+                .startDate(project.getStartDate())
+                .starRating(freelancer.getStarRating())
+                .proficiency(freelancer.getSkill().getProficiency())
+                .title(project.getTitle())
+                .salary(project.getPay())
+                .workStyle(project.getWorkStyle())
+                .description(project.getDescription())
+                .freelancerStatus(freelancerProject.getStatus()) // 프리랜서 상태
+                .build();
+    }
+
+    // 협의중인 프로젝트의 상태(CREATE => DISCUSSION_ACCEPT, DISCUSSION_ACCEPT)
+    @Transactional
+    public ProjectDiscussionStatusResponse changeDiscussionProjectStatus(Long projectId, Long freelancerId, String status) {
+        // 프로젝트 조회
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new RuntimeException("Not Found Project"));
+
+        // 프리랜서 조회
+        Freelancer freelancer = freelancerRepository.findById(freelancerId)
+                .orElseThrow(() -> new RuntimeException("Not Found Freelancer"));
+
+        // 프로젝트-프리랜서 조회
+        FreelancerProject freelancerProject = freelancerProjectRepository.findByFreelancerAndProject(freelancer, project)
+                .orElseThrow(() -> new RuntimeException("Not Found FreelancerProject"));
+
+        project.setClientStatus(status);
+        projectRepository.save(project);
+
+        if(project.getClientStatus().equals("DISCUSSION_ACCEPT") && freelancerProject.getStatus().equals("DISCUSSION_ACCEPT")) {
+            project.setClientStatus("ONGOING");
+            projectRepository.save(project);
+
+            for(FreelancerProject item: project.getFreelancerProjects()) {
+                if(item != freelancerProject) {
+                    freelancerProjectRepository.delete(item);
+                }
+            }
+
+            freelancerProject.setStatus("ONGOING");
+            freelancerProjectRepository.save(freelancerProject);
+        }
+
+        return ProjectDiscussionStatusResponse.builder()
+                .projectId(projectId)
+                .freelancerId(freelancerId)
+                .clientId(project.getClient().getClientId())
+                .freelancerStatus(freelancerProject.getStatus())
+                .clientStatus(project.getClientStatus())
+                .build();
+    }
+
+    // 프리랜서 => 수락(DISCUSSION => DISCUSSION_ACCEPT)
+    @Transactional
+    public ProjectDiscussionStatusResponse changeDiscussionFreelancerStatus(Long projectId, Long freelancerId, String status) {
+        // 프로젝트 조회
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new RuntimeException("Not Found Project"));
+
+        // 프리랜서 조회
+        Freelancer freelancer = freelancerRepository.findById(freelancerId)
+                .orElseThrow(() -> new RuntimeException("Not Found Freelancer"));
+
+        // 프로젝트-프리랜서 조회
+        FreelancerProject freelancerProject = freelancerProjectRepository.findByFreelancerAndProject(freelancer, project)
+                .orElseThrow(() -> new RuntimeException("Not Found FreelancerProject"));
+
+        freelancerProject.setStatus(status);
+        freelancerProjectRepository.save(freelancerProject);
+
+        if(project.getClientStatus().equals("DISCUSSION_ACCEPT") && freelancerProject.getStatus().equals("DISCUSSION_ACCEPT")) {
+            project.setClientStatus("ONGOING");
+            projectRepository.save(project);
+
+            for(FreelancerProject item: project.getFreelancerProjects()) {
+                if(item != freelancerProject) {
+                    freelancerProjectRepository.delete(item);
+                }
+            }
+
+            freelancerProject.setStatus("ONGOING");
+            freelancerProjectRepository.save(freelancerProject);
+        }
+
+        return ProjectDiscussionStatusResponse.builder()
+                .projectId(projectId)
+                .freelancerId(freelancerId)
+                .clientId(project.getClient().getClientId())
+                .freelancerStatus(freelancerProject.getStatus())
+                .clientStatus(project.getClientStatus())
+                .build();
+    }
 
     // 프로젝트 삭제
     @Transactional

@@ -112,7 +112,7 @@ public class ProjectController {
                 .collect(Collectors.toList());
     }
 
-    // TODO: 의뢰 취소
+    // 의뢰 취소
     @PostMapping("/api/projects/commission/cancel")
     public ProjectCommissionCancelResponse cancelCommissionProject(@RequestBody ProjectCommissionCancelRequest request) {
         String result = projectService.cancelCommissionProject(
@@ -122,5 +122,38 @@ public class ProjectController {
         return ProjectCommissionCancelResponse.builder()
                 .result(result)
                 .build();
+    }
+
+    // 협의중인 프리랜서 상세 조회 (프리랜서, 클라이언트, 프로젝트 정보)
+    @GetMapping("/api/projects/discussion/{projectId}")
+    public ProjectDiscussionDetail getDiscussionProjectDetail(
+            @PathVariable("projectId") Long projectId,
+            @RequestParam("freelancerId") Long freelancerId
+    ) {
+        return projectService.getProjectDiscussionDetail(freelancerId, projectId);
+    }
+
+    // 협의중인 프로젝트 => 클라이언트 상태 변경
+    @PostMapping("/api/projects/discussion/client/status")
+    public ProjectDiscussionStatusResponse changeDiscussionProjectStatus(
+            @RequestBody ProjectDiscussionStatusRequest request
+    ) {
+        return projectService.changeDiscussionProjectStatus(
+                request.getProjectId(),
+                request.getFreelancerId(),
+                request.getStatus()
+        );
+    }
+
+    // 협의 중인 프로젝트 => 프리랜서 상태 변경
+    @PostMapping("/api/projects/discussion/freelancer/status")
+    public ProjectDiscussionStatusResponse changeDiscussionFreelancerStatus(
+            @RequestBody ProjectDiscussionStatusRequest request
+    ) {
+        return projectService.changeDiscussionFreelancerStatus(
+                request.getProjectId(),
+                request.getFreelancerId(),
+                request.getStatus()
+        );
     }
 }

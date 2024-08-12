@@ -18,6 +18,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,7 +64,7 @@ public class ProjectService {
     // 프로젝트 등록
     @Transactional
     public ProjectDto registerProject(
-            Long clientId, String title, String description, String startDate, Integer period,
+            Long clientId, String title, String description, String startDate, String endDate, Integer period,
             String jobGroup, String job, Integer wantCareerYear, String workStyle, Integer pay, String skill) {
 
         log.info("============= create project ==================");
@@ -76,7 +78,8 @@ public class ProjectService {
                 .client(client)
                 .title(title)
                 .description(description)
-                .startDate(startDate)
+                .startDate(LocalDate.parse(startDate, DateTimeFormatter.ISO_DATE))
+                .endDate(LocalDate.parse(endDate, DateTimeFormatter.ISO_DATE))
                 .period(period)
                 .jobGroup(jobGroup)
                 .job(job)
@@ -262,7 +265,7 @@ public class ProjectService {
                 .job(freelancer.getJob())
                 .skill(freelancer.getSkill().getName())
                 .careerYear(freelancer.getCareerYear())
-                .startDate(project.getStartDate())
+                .startDate(project.getStartDate().toString())
                 .starRating(freelancer.getStarRating())
                 .proficiency(freelancer.getSkill().getProficiency())
                 .title(project.getTitle())

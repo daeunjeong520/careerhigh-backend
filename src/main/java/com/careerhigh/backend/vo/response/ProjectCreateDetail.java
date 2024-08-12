@@ -1,7 +1,10 @@
 package com.careerhigh.backend.vo.response;
 
 import com.careerhigh.backend.dto.ProjectDto;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
+
+import java.time.LocalDate;
 
 @Getter
 @Setter
@@ -16,6 +19,7 @@ public class ProjectCreateDetail {
     private Long projectId;
     private String title;
     private String description;
+
     private String startDate;
     private Integer period;
     private String jobGroup;

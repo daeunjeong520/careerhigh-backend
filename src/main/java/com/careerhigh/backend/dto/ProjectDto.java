@@ -5,6 +5,7 @@ import com.careerhigh.backend.persist.entity.FreelancerProject;
 import com.careerhigh.backend.persist.entity.Project;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,6 +20,7 @@ public class ProjectDto {
     private String title;            // 프로젝트 제목
     private String description;      // 프로젝트 상세 설명
     private String startDate;        // 시작예정일
+    private String endDate;          // 마감예정일
     private Integer period;          // 예상기간(월)
     private String jobGroup;         // 직군
     private String job;              // 직무
@@ -36,7 +38,8 @@ public class ProjectDto {
                 .projectId(project.getProjectId())
                 .title(project.getTitle())
                 .description(project.getDescription())
-                .startDate(project.getStartDate())
+                .startDate(project.getStartDate().toString())
+                .endDate(project.getEndDate().toString())
                 .period(project.getPeriod())
                 .jobGroup(project.getJobGroup())
                 .job(project.getJob())

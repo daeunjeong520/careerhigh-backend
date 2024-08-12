@@ -1,7 +1,10 @@
 package com.careerhigh.backend.vo.response;
 
 import com.careerhigh.backend.dto.FreelancerProjectDto;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
+
+import java.time.LocalDate;
 
 // 협의중인 프리랜서 상세 + 클라이언트, 프로젝트 정보 포함
 @Getter
@@ -25,6 +28,7 @@ public class ProjectDiscussionDetail {
     private String job; // 직무
     private String skill; // 스킬
     private Integer careerYear; // 경력
+
     private String startDate; // 시작가능일
     private Double starRating; // 평점
     private String proficiency; // 숙련도

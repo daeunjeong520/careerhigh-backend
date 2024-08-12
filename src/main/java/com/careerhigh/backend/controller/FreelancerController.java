@@ -3,8 +3,10 @@ package com.careerhigh.backend.controller;
 
 import com.careerhigh.backend.dto.FreelancerDto;
 import com.careerhigh.backend.service.FreelancerService;
+import com.careerhigh.backend.vo.request.FreelancerLoginRequest;
 import com.careerhigh.backend.vo.response.FreelancerDetail;
 import com.careerhigh.backend.vo.response.FreelancerInfo;
+import com.careerhigh.backend.vo.response.FreelancerLoginResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +20,14 @@ import java.util.stream.Collectors;
 public class FreelancerController {
 
     private final FreelancerService freelancerService;
+
+    // 로그인(대충..)
+    @PostMapping("/api/freelancers/login")
+    public FreelancerLoginResponse login(@RequestBody FreelancerLoginRequest request) {
+        return FreelancerLoginResponse.fromDto(
+                freelancerService.login(request.getEmail(), request.getPassword())
+        );
+    }
 
     // 프리랜서 전체 조회
     @GetMapping("/api/freelancers")

@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface FreelancerRepository extends JpaRepository<Freelancer, Long> {
 
@@ -15,5 +16,5 @@ public interface FreelancerRepository extends JpaRepository<Freelancer, Long> {
     @Query("SELECT f FROM Freelancer f WHERE f.job LIKE %:job%")
     List<Freelancer> findByJob(@Param("job") String job);
 
-    
+    Optional<Freelancer> findByEmail(String email);
 }

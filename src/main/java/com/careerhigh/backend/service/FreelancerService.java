@@ -1,6 +1,7 @@
 package com.careerhigh.backend.service;
 
 import com.careerhigh.backend.dto.FreelancerDto;
+import com.careerhigh.backend.persist.entity.Freelancer;
 import com.careerhigh.backend.persist.repository.FreelancerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,18 @@ import java.util.stream.Collectors;
 public class FreelancerService {
 
     private final FreelancerRepository freelancerRepository;
+
+    // 로그인
+    @Transactional
+    public FreelancerDto login(String email, String password) {
+        Freelancer freelancer = freelancerRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Not Found Freelancer"));
+
+        if(!freelancer.getEncryptedPwd().equals(password)) {
+            throw new RuntimeException("Not Match password");
+        }
+        return FreelancerDto.fromEntity(freelancer);
+    }
 
     // 프리랜서 전체 조회
     public List<FreelancerDto> getAllFreelancers() {

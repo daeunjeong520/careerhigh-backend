@@ -27,6 +27,7 @@ public class ProjectController {
                         request.getTitle(),
                         request.getDescription(),
                         request.getStartDate(),
+                        request.getEndDate(),
                         request.getPeriod(),
                         request.getJobGroup(),
                         request.getJob(),

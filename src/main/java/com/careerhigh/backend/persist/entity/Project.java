@@ -3,6 +3,7 @@ package com.careerhigh.backend.persist.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +25,10 @@ public class Project {
     private String description;        // 프로젝트 상세 설명
 
     @Column(name = "start_date")
-    private String startDate;          // 시작예정일
+    private LocalDate startDate;       // 시작예정일
+
+    @Column(name = "end_date")
+    private LocalDate endDate;         // 마감예정일
 
     @Column(name = "period")
     private Integer period;            // 예상기간(월)
@@ -60,4 +64,7 @@ public class Project {
 
     @OneToMany(mappedBy = "project")
     private final List<FreelancerProject> freelancerProjects = new ArrayList<>();
+
+    @OneToMany(mappedBy = "project")
+    private final List<Requirement> requirements = new ArrayList<>();
 }

@@ -1,6 +1,7 @@
 package com.careerhigh.backend.vo.response;
 
 import com.careerhigh.backend.dto.ProjectDto;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -18,7 +19,7 @@ public class ProjectInfo {
     private String job;             // 직무
     private String workStyle;       // 근무방식(원격/상주)
     private Integer pay;            // 예상 금액
-    private String startDate;       // 시작 예정일
+    private String startDate;    // 시작 예정일
     private Integer period;         // 예상 기간
 
     public static ProjectInfo fromDto(ProjectDto projectDto) {

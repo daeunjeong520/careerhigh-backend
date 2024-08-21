@@ -54,4 +54,7 @@ public class Freelancer {
     @OneToOne
     @JoinColumn(name = "skill_id")
     private Skill skill;
+
+    @Column(name = "fcm_token", length = 500)
+    private String fcmToken;
 }

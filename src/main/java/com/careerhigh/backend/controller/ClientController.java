@@ -29,7 +29,8 @@ public class ClientController {
                         request.getPhoneNumber(),
                         request.getCompanyName(),
                         request.getManagerName(),
-                        request.getManagerPhone()
+                        request.getManagerPhone(),
+                        request.getFcmToken()
                 )
         );
     }

@@ -16,7 +16,7 @@ public class ClientService {
 
     // 회원가입
     @Transactional
-    public ClientDto signup(String email, String password, String name, String phoneNumber, String companyName, String managerName, String managerPhone) {
+    public ClientDto signup(String email, String password, String name, String phoneNumber, String companyName, String managerName, String managerPhone, String fcmToken) {
         Client client = Client.builder()
                 .email(email)
                 .encryptedPwd(password)
@@ -26,6 +26,7 @@ public class ClientService {
                 .managerName(managerName)
                 .managerPhone(managerPhone)
                 .starRating(0.0)
+                .fcmToken(fcmToken)
                 .build();
 
         return ClientDto.fromEntity(clientRepository.save(client));

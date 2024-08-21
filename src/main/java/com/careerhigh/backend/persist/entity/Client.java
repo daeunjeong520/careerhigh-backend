@@ -49,4 +49,7 @@ public class Client {
     @OneToMany(mappedBy = "client")
     public List<Project> projectList = new ArrayList<>();
 
+    @Column(name = "fcm_token", length = 500)
+    public String fcmToken;
+
 }

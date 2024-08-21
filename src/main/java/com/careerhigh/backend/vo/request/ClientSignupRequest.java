@@ -17,4 +17,5 @@ public class ClientSignupRequest {
     private String companyName;
     private String managerName;
     private String managerPhone;
+    private String fcmToken;
 }

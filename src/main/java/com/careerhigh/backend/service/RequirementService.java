@@ -54,7 +54,7 @@ public class RequirementService {
         }
 
         // D-Day 계산
-        LocalDate startDate = project.getStartDate();
+        LocalDate startDate = LocalDate.now(); // 현재 날짜 기준
         LocalDate endDate = project.getEndDate();
         Long dDay = ChronoUnit.DAYS.between(startDate, endDate);
 
@@ -74,7 +74,7 @@ public class RequirementService {
 
     // 요구사항 등록
     @Transactional
-    public RequirementDto createRequirement(Long projectId, String title, String description, String endDate) {
+    public RequirementDto createRequirement(Long projectId, String title, String description, String endDate, String comment) {
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new RuntimeException("Not Found Project"));
 
@@ -85,6 +85,7 @@ public class RequirementService {
                 .description(description)
                 .endDate(LocalDate.parse(endDate, DateTimeFormatter.ISO_DATE))
                 .isCompleted(false)
+                .comment(comment)
                 .build();
 
         List<Requirement> requirements = project.getRequirements();
@@ -106,7 +107,43 @@ public class RequirementService {
                 .collect(Collectors.toList());
     }
 
-    // TODO: 요구사항 상세
+    // 요구사항 상세
+    public RequirementDto getRequirement(Long requirementId) {
+        Requirement requirement = requirementRepository.findById(requirementId)
+                .orElseThrow(() -> new RuntimeException("Not Found Requirement"));
 
+        return RequirementDto.fromEntity(requirement);
+    }
 
+    // 요구사항 수정
+    @Transactional
+    public RequirementDto updateRequirement(Long requirementId, String title, String description, String endDate, String comment) {
+        Requirement requirement = requirementRepository.findById(requirementId)
+                .orElseThrow(() -> new RuntimeException("Not Found Requirement"));
+
+        requirement.setTitle(title);
+        requirement.setDescription(description);
+        requirement.setEndDate(LocalDate.parse(endDate, DateTimeFormatter.ISO_DATE));
+        requirement.setComment(comment);
+
+        Requirement updatedRequirement = requirementRepository.save(requirement);
+
+        return RequirementDto.fromEntity(updatedRequirement);
+    }
+
+    // 요구사항 완료
+    @Transactional
+    public RequirementDto completeRequirement(Long requirementId) {
+        Requirement requirement = requirementRepository.findById(requirementId)
+                .orElseThrow(() -> new RuntimeException("Not Found Requirement"));
+
+        requirement.setCompleted(true);
+
+        requirementRepository.flush();
+
+        Requirement changedRequirement = requirementRepository.findById(requirementId)
+                .orElseThrow(() -> new RuntimeException("Not Found Requirement"));
+
+        return RequirementDto.fromEntity(changedRequirement);
+    }
 }

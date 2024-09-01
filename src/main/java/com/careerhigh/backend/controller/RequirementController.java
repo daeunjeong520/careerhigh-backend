@@ -92,4 +92,24 @@ public class RequirementController {
                 requirementService.completeRequirement(requirementId)
         );
     }
+
+    // 요구사항 리스트 마감일만 리스트로 조회
+    @GetMapping("/api/projects/{projectId}/requirements/endDate/text")
+    public List<String> getRequirementsEndDateText(@PathVariable("projectId") Long projectId) {
+        return requirementService.getRequirementsEndDateText(projectId);
+    }
+
+    // 요구사항 리스트(마감일로 조회)
+    @GetMapping("/api/projects/{projectId}/requirements/endDate")
+    public List<RequirementInfo> getRequirementsByEndDate(
+            @PathVariable("projectId") Long projectId,
+            @RequestParam("year") String year,
+            @RequestParam("month") String month,
+            @RequestParam("date") String date
+    ) {
+        return requirementService.getRequirementsByEndDate(projectId, year, month, date)
+                .stream()
+                .map(RequirementInfo::fromDto)
+                .collect(Collectors.toList());
+    }
 }

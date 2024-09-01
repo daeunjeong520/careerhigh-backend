@@ -8,4 +8,8 @@ import java.util.Optional;
 public interface ClientRepository extends JpaRepository<Client, Long> {
 
     Optional<Client> findByEmail(String email);
+
+    Optional<Client> findByNaverToken(String naverToken);
+    Optional<Client> findByGoogleToken(String googleToken);
+    Optional<Client> findByKakaoToken(String kakaoToken);
 }

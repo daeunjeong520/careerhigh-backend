@@ -146,4 +146,36 @@ public class RequirementService {
 
         return RequirementDto.fromEntity(changedRequirement);
     }
+
+    // 요구사항 리스트 반환 (마감일 기준으로)
+    public List<RequirementDto> getRequirementsByEndDate(Long projectId, String year, String month, String date) {
+
+        // 프로젝트 조회
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new RuntimeException("Not Found Project"));
+
+        // 마감일
+        LocalDate endDate = LocalDate.of(Integer.parseInt(year), Integer.parseInt(month), Integer.parseInt(date));
+
+        return requirementRepository.findByEndDateAndProject(endDate, project)
+                .stream()
+                .map(RequirementDto::fromEntity)
+                .collect(Collectors.toList());
+    }
+
+    // 요구사항 마감일 텍스트 리스트 반환
+    public List<String> getRequirementsEndDateText(Long projectId) {
+        // 프로젝트 조회
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new RuntimeException("Not Found Project"));
+
+        List<Requirement> requirements = project.getRequirements();
+        List<String> result = new ArrayList<>();
+
+        for(Requirement item: requirements) {
+            result.add(item.getEndDate().toString());
+        }
+
+        return result;
+    }
 }

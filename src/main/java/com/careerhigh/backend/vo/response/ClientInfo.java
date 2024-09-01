@@ -1,6 +1,5 @@
 package com.careerhigh.backend.vo.response;
 
-
 import com.careerhigh.backend.dto.ClientDto;
 import lombok.*;
 
@@ -9,16 +8,16 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ClientSignupResponse {
+public class ClientInfo {
 
     private Long clientId;
-    private String companyName;
-    private String managerName;
-    private String managerPhone;
-    private String managerEmail;
+    private String companyName; // 회사명
+    private String managerName; // 담당자명
+    private String managerPhone; // 담당자 연락처
+    private String managerEmail; // 담당자 이메일
 
-    public static ClientSignupResponse fromDto(ClientDto clientDto) {
-        return ClientSignupResponse.builder()
+    public static ClientInfo fromDto(ClientDto clientDto) {
+        return ClientInfo.builder()
                 .clientId(clientDto.getClientId())
                 .companyName(clientDto.getCompanyName())
                 .managerName(clientDto.getManagerName())

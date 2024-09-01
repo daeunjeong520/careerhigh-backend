@@ -18,10 +18,9 @@ public class RequirementInfo {
     private String endDate;
     private String comment;
     private Boolean isCompleted;
+    private String remainDate;
 
     public static RequirementInfo fromDto(RequirementDto requirementDto) {
-
-        log.info("requirementDto={}", requirementDto.isCompleted());
 
         return RequirementInfo.builder()
                 .requirementId(requirementDto.getRequirementId())
@@ -30,6 +29,7 @@ public class RequirementInfo {
                 .endDate(requirementDto.getEndDate())
                 .comment(requirementDto.getComment())
                 .isCompleted(requirementDto.isCompleted())
+                .remainDate(requirementDto.getRemainDate())
                 .build();
     }
 }

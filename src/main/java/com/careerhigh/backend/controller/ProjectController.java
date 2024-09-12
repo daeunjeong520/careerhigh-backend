@@ -18,6 +18,15 @@ public class ProjectController {
 
     private final ProjectService projectService;
 
+    // 프로젝트 리스트 전체 조회
+    @GetMapping("/api/projects/all")
+    public List<ProjectInfo> getProjectListAll() {
+        return projectService.getProjectListAll()
+                .stream()
+                .map(ProjectInfo::fromDto)
+                .collect(Collectors.toList());
+    }
+
     // 프로젝트 등록
     @PostMapping("/api/projects")
     public ProjectCreateResponse createProject(@RequestBody ProjectCreateRequest request) {
@@ -71,17 +80,6 @@ public class ProjectController {
                 .stream()
                 .map(FreelancerInfo::fromDto)
                 .collect(Collectors.toList());
-    }
-
-    // 프로젝트 지원(프리랜서 -> 클라이언트의 프로젝트)
-    @PostMapping("/api/projects/apply")
-    public ProjectApplyResponse applyProject(@RequestBody ProjectApplyRequest request) {
-        return ProjectApplyResponse.fromDto(
-                projectService.applyProject(
-                        request.getFreelancerId(),
-                        request.getProjectId()
-                )
-        );
     }
 
     // 클라이언트 -> 지원한 프리랜서 목록 조회
@@ -144,6 +142,29 @@ public class ProjectController {
                 request.getFreelancerId(),
                 request.getStatus()
         );
+    }
+
+    /**
+     *  Freelancer
+     */
+    // 프로젝트 지원(프리랜서 -> 클라이언트의 프로젝트)
+    @PostMapping("/api/projects/apply")
+    public ProjectApplyResponse applyProject(@RequestBody ProjectApplyRequest request) {
+        return ProjectApplyResponse.fromDto(
+                projectService.applyProject(
+                        request.getFreelancerId(),
+                        request.getProjectId()
+                )
+        );
+    }
+
+    // 지원한 프로젝트 리스트 조회
+    @GetMapping("/api/{freelancerId}/projects")
+    public List<ProjectInfo> getFreelancerProjectList(@PathVariable("freelancerId") Long freelancerId, @RequestParam("status") String status) {
+        return projectService.getFreelancerProjectList(freelancerId, status)
+                .stream()
+                .map(ProjectInfo::fromDto)
+                .collect(Collectors.toList());
     }
 
     // 협의 중인 프로젝트 => 프리랜서 상태 변경

@@ -22,6 +22,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -34,6 +35,14 @@ public class ProjectService {
     private final FreelancerRepository freelancerRepository;
     private final ProjectRepository projectRepository;
     private final FreelancerProjectRepository freelancerProjectRepository;
+
+    // 프로젝트 리스트 전체 조회
+    public List<ProjectDto> getProjectListAll() {
+        return projectRepository.findAll()
+                .stream()
+                .map(ProjectDto::fromEntity)
+                .collect(Collectors.toList());
+    }
 
     // 프로젝트 리스트 조회(status=CREATE, DISCUSSION_COMPLETE, ONGOING, COMPLETE)
     public List<ProjectDto> getProjectList(Long clientId, String clientStatus) {
@@ -52,6 +61,8 @@ public class ProjectService {
         }
         return result;
     }
+
+
 
     // 프로젝트 상세 조회
     public ProjectDto getProject(Long projectId) {
@@ -134,30 +145,6 @@ public class ProjectService {
             }
         }
         return result;
-    }
-
-    // 프로젝트 지원(프리랜서 -> 프로젝트) : APPLY
-    @Transactional
-    public FreelancerProjectDto applyProject(Long freelancerId, Long projectId) {
-        // 프로젝트 조회
-        Project project = projectRepository.findById(projectId)
-                .orElseThrow(() -> new RuntimeException("Not Found Project"));
-
-        // 프리랜서 조회
-        Freelancer freelancer = freelancerRepository.findById(freelancerId)
-                .orElseThrow(() -> new RuntimeException("Not Found Freelancer"));
-
-        // 프리랜서-프로젝트 저장
-        FreelancerProject freelancerProject = FreelancerProject.builder()
-                .project(project)
-                .freelancer(freelancer)
-                .status("APPLY")
-                .build();
-
-        FreelancerProject result = freelancerProjectRepository.save(freelancerProject);
-        project.getFreelancerProjects().add(result);
-
-        return FreelancerProjectDto.fromEntity(result);
     }
 
     // 지원한 프리랜서 리스트 조회: APPLY
@@ -335,6 +322,9 @@ public class ProjectService {
         freelancerProject.setStatus(status);
         freelancerProjectRepository.save(freelancerProject);
 
+        log.info("Project={}", freelancerProject.getProject().getProjectId());
+        log.info("Freelancer={}", freelancerProject.getFreelancer().getFreelancerId());
+
         if(project.getClientStatus().equals("DISCUSSION_ACCEPT") && freelancerProject.getStatus().equals("DISCUSSION_ACCEPT")) {
             project.setClientStatus("ONGOING");
             projectRepository.save(project);
@@ -347,6 +337,7 @@ public class ProjectService {
 
             freelancerProject.setStatus("ONGOING");
             freelancerProjectRepository.save(freelancerProject);
+
         }
 
         return ProjectDiscussionStatusResponse.builder()
@@ -363,5 +354,51 @@ public class ProjectService {
     public Long deleteProject(Long projectId) {
         projectRepository.deleteById(projectId);
         return projectId;
+    }
+
+    /**
+     * Freelancer
+     */
+    // 프로젝트 지원(프리랜서 -> 프로젝트) : APPLY
+    @Transactional
+    public FreelancerProjectDto applyProject(Long freelancerId, Long projectId) {
+        // 프로젝트 조회
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new RuntimeException("Not Found Project"));
+
+        // 프리랜서 조회
+        Freelancer freelancer = freelancerRepository.findById(freelancerId)
+                .orElseThrow(() -> new RuntimeException("Not Found Freelancer"));
+
+        // 프리랜서-프로젝트 저장
+        FreelancerProject freelancerProject = FreelancerProject.builder()
+                .project(project)
+                .freelancer(freelancer)
+                .status("APPLY")
+                .build();
+
+        FreelancerProject result = freelancerProjectRepository.save(freelancerProject);
+        project.getFreelancerProjects().add(result);
+        freelancer.getFreelancerProjects().add(result);
+
+        return FreelancerProjectDto.fromEntity(result);
+    }
+
+    // TODO: 프로젝트 리스트 조회(프리랜서 => APPLY)
+    public List<ProjectDto> getFreelancerProjectList(Long freelancerId, String status) {
+        // 프리랜서 조회
+        Freelancer freelancer = freelancerRepository.findById(freelancerId)
+                .orElseThrow(() -> new RuntimeException("Not Found Freelancer"));
+
+        // 프리랜서-프로젝트 조회
+        List<FreelancerProject> freelancerProjects = freelancer.getFreelancerProjects();
+        List<ProjectDto> result = new ArrayList<>();
+
+        for(FreelancerProject item: freelancerProjects) {
+            if(item.getStatus().equals(status)) {
+                result.add(ProjectDto.fromEntity(item.getProject()));
+            }
+        }
+        return result;
     }
 }

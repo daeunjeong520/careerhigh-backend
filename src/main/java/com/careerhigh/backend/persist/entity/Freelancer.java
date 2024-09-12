@@ -6,6 +6,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Getter
 @NoArgsConstructor
@@ -57,4 +60,7 @@ public class Freelancer {
 
     @Column(name = "fcm_token", length = 500)
     private String fcmToken;
+
+    @OneToMany(mappedBy = "freelancer")
+    private List<FreelancerProject> freelancerProjects = new ArrayList<>();
 }

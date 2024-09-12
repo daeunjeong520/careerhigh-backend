@@ -13,6 +13,7 @@ import java.time.LocalDate;
 @Builder
 public class ProjectInfo {
 
+    private Long clientId;          // 클라이언트 아이디
     private Long projectId;
     private String title;           // 프로젝트 제목
     private String jobGroup;        // 직군
@@ -24,6 +25,7 @@ public class ProjectInfo {
 
     public static ProjectInfo fromDto(ProjectDto projectDto) {
         return ProjectInfo.builder()
+                .clientId(projectDto.getClient().getClientId())
                 .projectId(projectDto.getProjectId())
                 .title(projectDto.getTitle())
                 .jobGroup(projectDto.getJobGroup())

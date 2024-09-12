@@ -21,7 +21,7 @@ public class Project {
     @Column(name = "title")
     private String title;              // 프로젝트 제목
 
-    @Column(name = "description")
+    @Column(name = "description", length = 10000)
     private String description;        // 프로젝트 상세 설명
 
     @Column(name = "start_date")

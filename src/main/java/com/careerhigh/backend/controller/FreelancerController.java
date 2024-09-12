@@ -4,9 +4,11 @@ package com.careerhigh.backend.controller;
 import com.careerhigh.backend.dto.FreelancerDto;
 import com.careerhigh.backend.service.FreelancerService;
 import com.careerhigh.backend.vo.request.FreelancerLoginRequest;
+import com.careerhigh.backend.vo.request.ProjectApplyRequest;
 import com.careerhigh.backend.vo.response.FreelancerDetail;
 import com.careerhigh.backend.vo.response.FreelancerInfo;
 import com.careerhigh.backend.vo.response.FreelancerLoginResponse;
+import com.careerhigh.backend.vo.response.ProjectApplyResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 

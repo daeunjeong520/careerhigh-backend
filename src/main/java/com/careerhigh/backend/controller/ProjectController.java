@@ -196,7 +196,7 @@ public class ProjectController {
         );
     }
 
-    // 지원한 프로젝트 리스트 조회
+    // 프로젝트 리스트 조회(지원(APPLY)/의뢰(COMMISSION))
     @GetMapping("/api/{freelancerId}/projects")
     public List<ProjectInfo> getFreelancerProjectList(@PathVariable("freelancerId") Long freelancerId, @RequestParam("status") String status) {
         return projectService.getFreelancerProjectList(freelancerId, status)
@@ -215,5 +215,17 @@ public class ProjectController {
                 request.getFreelancerId(),
                 request.getStatus()
         );
+    }
+
+    // 의뢰받은 프로젝트 거절
+    @PostMapping("/api/projects/commissioned/deny")
+    public DenyCommissionedProjectResponse denyCommissionedProject(@RequestBody DenyCommissionedProjectRequest request) {
+        return projectService.denyCommissionedProject(request.getProjectId(), request.getFreelancerId());
+    }
+
+    // 의뢰받은 프로젝트 수락
+    @PostMapping("/api/projects/commissioned/accept")
+    public AcceptCommissionedProjectResponse acceptCommissionedProject(@RequestBody AcceptCommissionedProjectRequest request) {
+        return projectService.acceptCommissionedProject(request.getProjectId(), request.getFreelancerId());
     }
 }

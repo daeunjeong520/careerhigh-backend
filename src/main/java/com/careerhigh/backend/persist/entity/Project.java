@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,4 +68,20 @@ public class Project {
 
     @OneToMany(mappedBy = "project")
     private final List<Requirement> requirements = new ArrayList<>();
+
+    // 프로젝트 수정
+    public void changeProject(String title, String description, String startDate, String endDate, Integer period,
+                              String jobGroup, String job, Integer wantCareerYear, String workStyle, Integer pay, String skill) {
+        this.title = title;
+        this.description = description;
+        this.startDate = LocalDate.parse(startDate, DateTimeFormatter.ISO_DATE);
+        this.endDate = LocalDate.parse(endDate, DateTimeFormatter.ISO_DATE);
+        this.period = period;
+        this.jobGroup = jobGroup;
+        this.job = job;
+        this.wantCareerYear = wantCareerYear;
+        this.workStyle = workStyle;
+        this.pay = pay;
+        this.skill = skill;
+    }
 }

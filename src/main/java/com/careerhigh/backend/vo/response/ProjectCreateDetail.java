@@ -15,12 +15,11 @@ public class ProjectCreateDetail {
 
     private Long clientId;
     private String companyName;
-
     private Long projectId;
     private String title;
     private String description;
-
     private String startDate;
+    private String endDate;
     private Integer period;
     private String jobGroup;
     private String job;
@@ -37,6 +36,7 @@ public class ProjectCreateDetail {
                 .title(projectDto.getTitle())
                 .description(projectDto.getDescription())
                 .startDate(projectDto.getStartDate())
+                .endDate(projectDto.getEndDate())
                 .period(projectDto.getPeriod())
                 .jobGroup(projectDto.getJobGroup())
                 .job(projectDto.getJob())

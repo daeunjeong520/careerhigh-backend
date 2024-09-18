@@ -11,6 +11,7 @@ import com.careerhigh.backend.persist.repository.ClientRepository;
 import com.careerhigh.backend.persist.repository.FreelancerProjectRepository;
 import com.careerhigh.backend.persist.repository.FreelancerRepository;
 import com.careerhigh.backend.persist.repository.ProjectRepository;
+import com.careerhigh.backend.vo.response.ProjectDeleteResponse;
 import com.careerhigh.backend.vo.response.ProjectDiscussionDetail;
 import com.careerhigh.backend.vo.response.ProjectDiscussionStatusResponse;
 import lombok.RequiredArgsConstructor;
@@ -36,42 +37,9 @@ public class ProjectService {
     private final ProjectRepository projectRepository;
     private final FreelancerProjectRepository freelancerProjectRepository;
 
-    // 프로젝트 리스트 전체 조회
-    public List<ProjectDto> getProjectListAll() {
-        return projectRepository.findAll()
-                .stream()
-                .map(ProjectDto::fromEntity)
-                .collect(Collectors.toList());
-    }
-
-    // 프로젝트 리스트 조회(status=CREATE, DISCUSSION_COMPLETE, ONGOING, COMPLETE)
-    public List<ProjectDto> getProjectList(Long clientId, String clientStatus) {
-        // 클라이언트 조회
-        Client client = clientRepository.findById(clientId)
-                .orElseThrow(() -> new RuntimeException("Not found Client"));
-
-        // 클라이언트의 프로젝트 전체 리스트 조회
-        List<Project> projectList = client.getProjectList();
-        List<ProjectDto> result = new ArrayList<>();
-
-        for(Project project: projectList) {
-            if(project.getClientStatus().equals(clientStatus)) {
-                result.add(ProjectDto.fromEntity(project));
-            }
-        }
-        return result;
-    }
-
-
-
-    // 프로젝트 상세 조회
-    public ProjectDto getProject(Long projectId) {
-        Project project = projectRepository.findById(projectId)
-                .orElseThrow(() -> new RuntimeException("Project Not Found"));
-
-        return ProjectDto.fromEntity(project);
-    }
-
+    /**
+     * 클라이언트 - 프로젝트 관리(등록/수정/삭제)
+     */
     // 프로젝트 등록
     @Transactional
     public ProjectDto registerProject(
@@ -103,6 +71,64 @@ public class ProjectService {
                 .build();
 
         return ProjectDto.fromEntity(projectRepository.save(project));
+    }
+    // 프로젝트 수정
+    @Transactional
+    public ProjectDto modifyProject(Long projectId, String title, String description, String startDate, String endDate, Integer period,
+                                    String jobGroup, String job, Integer wantCareerYear, String workStyle, Integer pay, String skill) {
+
+        // 프로젝트 조회
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new RuntimeException("Not Found Project"));
+
+        // 프로젝트 수정
+        project.changeProject(title, description, startDate, endDate, period, jobGroup, job, wantCareerYear, workStyle, pay, skill);
+
+        return ProjectDto.fromEntity(project);
+    }
+
+    // 프로젝트 삭제
+    @Transactional
+    public ProjectDeleteResponse deleteProjectById(Long projectId) {
+        projectRepository.deleteById(projectId);
+        return ProjectDeleteResponse.from(projectId, "OK");
+    }
+
+    /**
+     * 프로젝트 조회
+     */
+    // 프로젝트 리스트 전체 조회
+    public List<ProjectDto> getProjectListAll() {
+        return projectRepository.findAll()
+                .stream()
+                .map(ProjectDto::fromEntity)
+                .collect(Collectors.toList());
+    }
+
+    // 프로젝트 리스트 조회(status=CREATE, DISCUSSION_COMPLETE, ONGOING, COMPLETE)
+    public List<ProjectDto> getProjectList(Long clientId, String clientStatus) {
+        // 클라이언트 조회
+        Client client = clientRepository.findById(clientId)
+                .orElseThrow(() -> new RuntimeException("Not found Client"));
+
+        // 클라이언트의 프로젝트 전체 리스트 조회
+        List<Project> projectList = client.getProjectList();
+        List<ProjectDto> result = new ArrayList<>();
+
+        for(Project project: projectList) {
+            if(project.getClientStatus().equals(clientStatus)) {
+                result.add(ProjectDto.fromEntity(project));
+            }
+        }
+        return result;
+    }
+
+    // 프로젝트 상세 조회
+    public ProjectDto getProject(Long projectId) {
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new RuntimeException("Project Not Found"));
+
+        return ProjectDto.fromEntity(project);
     }
 
     // 프로젝트 의뢰(클라이언트 -> 프리랜서 프로젝트 의뢰): COMMISSION

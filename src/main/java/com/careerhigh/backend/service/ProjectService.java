@@ -220,7 +220,7 @@ public class ProjectService {
         List<FreelancerProject> freelancerProjects = project.getFreelancerProjects();
 
         for(FreelancerProject item: freelancerProjects) {
-            if(item.getStatus().equals("DISCUSSION")) {
+            if(item.getStatus().equals("DISCUSSION") || item.getStatus().equals("DISCUSSION_ACCEPT")) {
                 result.add(FreelancerDto.fromEntity(item.getFreelancer()));
             }
         }
@@ -428,7 +428,7 @@ public class ProjectService {
         return FreelancerProjectDto.fromEntity(result);
     }
 
-    // 프로젝트 리스트 조회(프리랜서 => APPLY/COMMISSION)
+    // 프로젝트 리스트 조회(프리랜서 => APPLY/COMMISSION/DISCUSSION/DISCUSSION_ACCEPT)
     public List<ProjectDto> getFreelancerProjectList(Long freelancerId, String status) {
         // 프리랜서 조회
         Freelancer freelancer = freelancerRepository.findById(freelancerId)
@@ -439,8 +439,14 @@ public class ProjectService {
         List<ProjectDto> result = new ArrayList<>();
 
         for(FreelancerProject item: freelancerProjects) {
-            if(item.getStatus().equals(status)) {
-                result.add(ProjectDto.fromEntity(item.getProject()));
+            if(status.equals("DISCUSSION")) {
+                if(item.getStatus().equals(status) || item.getStatus().equals("DISCUSSION_ACCEPT")) {
+                    result.add(ProjectDto.fromEntity(item.getProject()));
+                }
+            }else {
+                if(item.getStatus().equals(status)) {
+                    result.add(ProjectDto.fromEntity(item.getProject()));
+                }
             }
         }
         return result;
@@ -500,4 +506,5 @@ public class ProjectService {
 
         return new AcceptCommissionedProjectResponse(freelancerId, projectId, "ACCEPT_COMMISSIONED_PROJECT");
     }
+
 }
